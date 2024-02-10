@@ -1,60 +1,79 @@
-## Things to be explained in the course:
-1. What is Ledger? More details here: https://internetcomputer.org/docs/current/developer-docs/integrations/ledger/
-2. What is Internet Identity? More details here: https://internetcomputer.org/internet-identity
-3. What is Principal, Identity, Address? https://internetcomputer.org/internet-identity | https://yumimarketplace.medium.com/whats-the-difference-between-principal-id-and-account-id-3c908afdc1f9
-4. Canister-to-canister communication and how multi-canister development is done? https://medium.com/icp-league/explore-backend-multi-canister-development-on-ic-680064b06320
+# ICP DOCUMENT-REGISTRY
 
-## How to deploy canisters implemented in the course
+This is a Dapp that helps users verify documents that have been issued by an organization. 
 
-### Ledger canister
-`./deploy-local-ledger.sh` - deploys a local Ledger canister. IC works differently when run locally so there is no default network token available and you have to deploy it yourself. Remember that it's not a token like ERC-20 in Ethereum, it's a native token for ICP, just deployed separately.
-This canister is described in the `dfx.json`:
-```
-	"ledger_canister": {
-  	"type": "custom",
-  	"candid": "https://raw.githubusercontent.com/dfinity/ic/928caf66c35627efe407006230beee60ad38f090/rs/rosetta-api/icp_ledger/ledger.did",
-  	"wasm": "https://download.dfinity.systems/ic/928caf66c35627efe407006230beee60ad38f090/canisters/ledger-canister.wasm.gz",
-  	"remote": {
-    	"id": {
-      	"ic": "ryjl3-tyaaa-aaaaa-aaaba-cai"
-    	}
-  	}
-	}
-```
-`remote.id.ic` - that is the principal of the Ledger canister and it will be available by this principal when you work with the ledger.
+The application uses the encryption methods sha256 and keccak-256 to produce a distinct key that is identifiable to that single issued document.
 
-Also, in the scope of this script, a minter identity is created which can be used for minting tokens
-for the testing purposes.
-Additionally, the default identity is pre-populated with 1000_000_000_000 e8s which is equal to 10_000 * 10**8 ICP.
-The decimals value for ICP is 10**8.
+## Contract Parameters
 
-List identities:
-`dfx identity list`
+- Users have the ability to add documents to the contract and they can also delete the documents they added.
+- To add a document, user has to pay a set fee of ICP in example the fee is set to 2 ICP tokens.
+- To verify a document, user has to pay a fee of ICP in example the fee is set to 1 ICP token.
 
-Switch to the minter identity:
-`dfx identity use minter`
+## Use Cases
 
-Transfer ICP:
-`dfx ledger transfer <ADDRESS>  --memo 0 --icp 100 --fee 0`
-where:
- - `--memo` is some correlation id that can be set to identify some particular transactions (we use that in the marketplace canister).
- - `--icp` is the transfer amount
- - `--fee` is the transaction fee. In this case it's 0 because we make this transfer as the minter idenity thus this transaction is of type MINT, not TRANSFER.
- - `<ADDRESS>` is the address of the recipient. To get the address from the principal, you can use the helper function from the marketplace canister - `getAddressFromPrincipal(principal: Principal)`, it can be called via the Candid UI.
+1. This Dapp can be used by document issuing organizations, like schools, business, e.t.c.
+2. It can be used to ensure validity of a particular document, and help reduce the effect of forgery in the professional world.
 
+## How to deploy canisters
 
-### Internet identity canister
+- Start the Local Internet Computer
 
-`dfx deploy internet_identity` - that is the canister that handles the authentication flow. Once it's deployed, the `js-agent` library will be talking to it to register identities. There is UI that acts as a wallet where you can select existing identities
-or create a new one.
+    ```bash
+    dfx start --background --clean
+    ```
 
-### Marketplace canister
+- Deploy the Ledger Canister
 
-`dfx deploy dfinity_js_backend` - deploys the marketplace canister where the business logic is implemented.
-Basically, it implements functions like add, view, update, delete, and buy products + a set of helper functions.
+    ```bash
+    npm run deploy:ledger
+    ```
 
-Do not forget to run `dfx generate dfinity_js_backend` anytime you add/remove functions in the canister or when you change the signatures.
-Otherwise, these changes won't be reflected in IDL's and won't work when called using the JS agent.
+- Deploy the Internet Identity Canister
 
-### Marketplace frontend canister
-`dfx deploy dfinity_js_frontend` - deployes the frontend app for the `dfinity_js_backend` canister on IC.
+    ```bash
+    npm run deploy:identity
+    ```
+
+- Deploy the DAO Backend Canister
+
+    ```bash
+	# run with dfx and set addDocFee and verifyDocFee in e8s
+
+	dfx deploy dfinity_js_backend --argument '(record {addDocFee = <amount in e8s>; verifyDocFee = <amount in e8s> })'
+
+	# or run using npm with preset values
+	# addDocFee = 2_0000_0000 i.e 2 ICP tokens
+	# voteTime = 1_0000_0000 i.e 1 ICP tokens
+	npm run deploy:backend
+
+    ```
+
+- Deploy the DAO Frontend Canister
+
+    ```bash
+    npm run deploy:frontend
+    ```
+
+- Run Frontend Locally
+
+    ```bash
+    npm run start
+    ```
+
+## Minting Tokens to your account
+
+This next step shows how to mint icp tokens from the locally deployed Ledger canister.
+
+- Copy your dfx address from the wallet on the doc reg frontend by clicking on it.
+
+    ![gettokens](./assets/img/dfxaddress.png)
+
+- Run the mint script.
+
+    ```bash
+    # npm run mint:tokens <amount in e8s> <dfx address>
+   npm run mint:tokens 500_0000_0000 aa3d50ea7b070d4349eda6ff4b0318c4f896ff4b0318c4f89
+
+	# N/B: This mints 500 ICP tokens from the locally deployed ledger to the address.
+    ```

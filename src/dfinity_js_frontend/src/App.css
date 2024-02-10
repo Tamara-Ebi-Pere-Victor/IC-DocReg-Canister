@@ -6,3 +6,91 @@
 .vh-80 {
   height: 80vh!important;
 }
+
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700&display=swap");
+
+body {
+	font-family: "Lato", sans-serif;
+	font-weight: 300;
+}
+
+#menu {
+	font-weight: 400;
+	background: #ddd;
+	text-align: center;
+	padding: 5px;
+	line-height: 1.5;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+#menu a {
+	text-decoration: none;
+	padding: 5px 10px;
+	border-radius: 5px;
+}
+
+#menu a:hover {
+	background: #bbb;
+}
+
+main > section {
+	display: none;
+	padding: 20px 5px;
+}
+
+section#viewHome {
+	display: block;
+}
+
+section h1 {
+	margin: 10px 0px;
+	font-size: 1.2em;
+}
+
+#infoBox,
+#errorBox,
+#loadingBox {
+	width: 80%;
+	margin: 10px auto;
+	color: white;
+	text-align: center;
+	padding: 5px;
+	border-radius: 3px;
+}
+
+#infoBox > header,
+#errorBox > header,
+#loadingBox > header {
+	float: right;
+	margin-right: 5px;
+}
+
+#infoBox > header:hover,
+#errorBox > header:hover,
+#loadingBox > header:hover {
+	transition: all 0.2s;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+#loadingBox {
+	background: #e5a93b;
+}
+#infoBox {
+	background: #393;
+}
+#errorBox {
+	background: #f50;
+}
+
+footer {
+	background: #ddd;
+	padding: 5px 10px;
+	font-size: 0.8em;
+	text-align: center;
+	border-radius: 3px;
+}
+.hide {
+	display: none;
+}
