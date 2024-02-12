@@ -35,7 +35,7 @@ The application uses the encryption methods sha256 and keccak-256 to produce a d
     npm run deploy:identity
     ```
 
-- Deploy the DAO Backend Canister
+- Deploy the Backend Canister
 
     ```bash
 	# run with dfx and set addDocFee and verifyDocFee in e8s
@@ -49,7 +49,7 @@ The application uses the encryption methods sha256 and keccak-256 to produce a d
 
     ```
 
-- Deploy the DAO Frontend Canister
+- Deploy the Frontend Canister
 
     ```bash
     npm run deploy:frontend
