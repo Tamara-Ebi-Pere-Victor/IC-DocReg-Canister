@@ -1,3 +1,4 @@
+// Imports...
 import {
 	query,
 	update,
@@ -45,6 +46,7 @@ const VerifyDocumentPayload = Record({
 	hash: text,
 });
 
+// Initialization payload type
 const InitPayload = Record({
 	addDocFee: nat64,
 	verifyDocFee: nat64,
@@ -96,6 +98,7 @@ const ORDER_RESERVATION_PERIOD = 120n; // reservation period in seconds
     initialization of the Ledger canister. The principal text value is hardcoded because 
     we set it in the `dfx.json`
 */
+// Initialize the ledger canister
 const icpCanister = Ledger(Principal.fromText('ryjl3-tyaaa-aaaaa-aaaba-cai'));
 
 export default Canister({
@@ -111,11 +114,12 @@ export default Canister({
 		nextDocId = Some(0);
 	}),
 
+	 // Function to create an add document order
 	createAddDocumentOrder: update([], Result(PaymentOrder, Message), () => {
 		let orderId = uuidv4();
 
 		if ('None' in addDocFee) {
-			return Err({ NotFound: 'add doc fee not set' });
+			return Err({ NotFound: 'add document fee not set' });
 		}
 
 		const paymentOrder = {
